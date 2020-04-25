@@ -54,7 +54,7 @@ public class MeasurementService {
             return;
         }
         final var foundCase = FoundCase.builder()
-                .localDateTime(measurement.getMeasurementDate())
+                .dateTime(measurement.getMeasurementDate())
                 .numberOfInfected(numberOfInfected)
                 .build();
         foundCases.add(foundCase);
