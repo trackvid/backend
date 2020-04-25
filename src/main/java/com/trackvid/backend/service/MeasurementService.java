@@ -1,6 +1,6 @@
 package com.trackvid.backend.service;
 
-import com.trackvid.backend.database.repository.MeasurementDayRepository;
+import com.trackvid.backend.config.properties.TrackProperties;
 import com.trackvid.backend.database.repository.MeasurementLocationRepository;
 import com.trackvid.backend.database.repository.MeasurementTimeRepository;
 import com.trackvid.backend.domain.FoundCase;
@@ -16,9 +16,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MeasurementService {
     private final MeasurementAddService measurementAddService;
-    private final MeasurementDayRepository measurementDayRepository;
     private final MeasurementTimeRepository measurementTimeRepository;
     private final MeasurementLocationRepository measurementLocationRepository;
+    private final TrackProperties trackProperties;
 
     public void addMeasurements(final Measurements measurements) {
         measurements.getMeasurements().forEach(measurementAddService::addMeasurement);
@@ -32,20 +32,24 @@ public class MeasurementService {
     }
 
     private void addFoundCaseForMeasurement(final Measurement measurement, final List<FoundCase> foundCases) {
-        final var measurementTime = measurementTimeRepository.findByTimeAndAndMeasurementTimeEdge_MeasurementDay_DayDate(
-                measurement.getMeasurementDate().toLocalTime(),
+        final var measurementTimes = measurementTimeRepository.findAllByTimeBetweenAndAndMeasurementTimeEdge_MeasurementDay_DayDate(
+                measurement.getMeasurementDate().toLocalTime().minusMinutes(trackProperties.getTimePrecisionInMinutes()),
+                measurement.getMeasurementDate().toLocalTime().plusMinutes(trackProperties.getTimePrecisionInMinutes()),
                 measurement.getMeasurementDate().toLocalDate());
-        if (measurementTime.isEmpty()) {
+        if (measurementTimes.isEmpty()) {
             return;
         }
         final var location = measurement.getLocation();
-        final var numberOfInfected = measurementLocationRepository.findAllByLatitudeBetweenAndAndLongitudeBetweenAndMeasurementEdge_MeasurementTime_Id(
-                location.getLatitude() - 5,
-                location.getLatitude() + 5,
-                location.getLongitude() - 5,
-                location.getLongitude() + 5,
-                measurementTime.get().getId()
-        ).size();
+        var numberOfInfected = 0;
+        for (final var measurementTime : measurementTimes) {
+            numberOfInfected += measurementLocationRepository.findAllByLatitudeBetweenAndAndLongitudeBetweenAndMeasurementEdge_MeasurementTime_Id(
+                    location.getLatitude() - trackProperties.getGeoPrecision(),
+                    location.getLatitude() + trackProperties.getGeoPrecision(),
+                    location.getLongitude() - trackProperties.getGeoPrecision(),
+                    location.getLongitude() + trackProperties.getGeoPrecision(),
+                    measurementTime.getId()
+            ).size();
+        }
         if (numberOfInfected == 0) {
             return;
         }
