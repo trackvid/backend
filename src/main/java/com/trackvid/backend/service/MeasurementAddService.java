@@ -30,14 +30,14 @@ public class MeasurementAddService {
 
     }
 
-    private MeasurementDay getMeasurementDay(final Measurement measurement) {
-        return measurementDayRepository.findByDayDate(measurement.getMeasurementDate().toLocalDate())
+    MeasurementDay getMeasurementDay(final Measurement measurement) {
+        return measurementDayRepository.findByDayDate(measurement.getDate().toLocalDate())
                 .orElseGet(() -> createMeasurementDayFromMeasurement(measurement));
     }
 
     private MeasurementDay createMeasurementDayFromMeasurement(final Measurement measurement) {
         return MeasurementDay.builder()
-                .dayDate(measurement.getMeasurementDate().toLocalDate())
+                .dayDate(measurement.getDate().toLocalDate())
                 .build();
     }
 
@@ -45,14 +45,14 @@ public class MeasurementAddService {
         if (measurementDay.getId() == null) {
             return createMeasurementTimeFromMeasurement(measurement, measurementDay);
         } else {
-            return measurementTimeRepository.findByTimeAndAndMeasurementTimeEdge_MeasurementDay_DayDate(measurement.getMeasurementDate().toLocalTime(), measurementDay.getDayDate())
+            return measurementTimeRepository.findByTimeAndAndMeasurementTimeEdge_MeasurementDay_DayDate(measurement.getDate().toLocalTime(), measurementDay.getDayDate())
                     .orElseGet(() -> createMeasurementTimeFromMeasurement(measurement, measurementDay));
         }
     }
 
     private MeasurementTime createMeasurementTimeFromMeasurement(final Measurement measurement, final MeasurementDay measurementDay) {
         final var measurementTime = MeasurementTime.builder()
-                .time(measurement.getMeasurementDate().toLocalTime())
+                .time(measurement.getDate().toLocalTime())
                 .build();
         final var measurementTimeEdge = MeasurementTimeEdge.builder()
                 .measurementDay(measurementDay)

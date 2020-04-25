@@ -33,9 +33,9 @@ public class MeasurementService {
 
     private void addFoundCaseForMeasurement(final Measurement measurement, final List<FoundCase> foundCases) {
         final var measurementTimes = measurementTimeRepository.findAllByTimeBetweenAndAndMeasurementTimeEdge_MeasurementDay_DayDate(
-                measurement.getMeasurementDate().toLocalTime().minusMinutes(trackProperties.getTimePrecisionInMinutes()),
-                measurement.getMeasurementDate().toLocalTime().plusMinutes(trackProperties.getTimePrecisionInMinutes()),
-                measurement.getMeasurementDate().toLocalDate());
+                measurement.getDate().toLocalTime().minusMinutes(trackProperties.getTimePrecisionInMinutes()),
+                measurement.getDate().toLocalTime().plusMinutes(trackProperties.getTimePrecisionInMinutes()),
+                measurement.getDate().toLocalDate());
         if (measurementTimes.isEmpty()) {
             return;
         }
@@ -54,7 +54,7 @@ public class MeasurementService {
             return;
         }
         final var foundCase = FoundCase.builder()
-                .dateTime(measurement.getMeasurementDate())
+                .date(measurement.getDate())
                 .numberOfInfected(numberOfInfected)
                 .build();
         foundCases.add(foundCase);
