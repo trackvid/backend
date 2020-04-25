@@ -30,7 +30,7 @@ public class MeasurementAddService {
 
     }
 
-    MeasurementDay getMeasurementDay(final Measurement measurement) {
+    private MeasurementDay getMeasurementDay(final Measurement measurement) {
         return measurementDayRepository.findByDayDate(measurement.getMeasurementDate().toLocalDate())
                 .orElseGet(() -> createMeasurementDayFromMeasurement(measurement));
     }
