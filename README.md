@@ -5,3 +5,40 @@
 ## Data model
 
 We created data model in Miro: [Data model](https://miro.com/app/board/o9J_ktA824Q=/)
+
+## How to run
+
+
+### Required properties in application.properties
+```
+//neo4j username
+spring.data.neo4j.username=*
+// neo4j password
+spring.data.neo4j.password=*
+```
+
+optionally you can change type of updating indexes neo4j and server port
+```
+spring.data.neo4j.auto-index=*
+server.port=*
+```
+
+
+### Run
+```
+./gradlew build
+./gradlew bootRuun
+```
+
+Tests:
+```
+./gradlew check
+```
+
+### Swagger
+
+Additionally under path specified below is swagger documentation of api.
+ 
+```
+${project_url}/swagger-ui.html
+```
