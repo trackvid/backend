@@ -26,4 +26,7 @@ public class FoundCase {
 
     @ApiModelProperty(value = "Number of cases in close proximity", example = "3")
     private long numberOfInfected;
+
+    @ApiModelProperty(value = "location where are you could meet infected people")
+    private Location location;
 }
