@@ -56,6 +56,7 @@ public class MeasurementService {
         final var foundCase = FoundCase.builder()
                 .date(measurement.getDate())
                 .numberOfInfected(numberOfInfected)
+                .location(measurement.getLocation())
                 .build();
         foundCases.add(foundCase);
     }
